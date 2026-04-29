@@ -1,0 +1,407 @@
+{
+  "info": {
+    "name": "API CRUD de Clientes",
+    "description": "Collection completa para testar a API CRUD de Clientes desenvolvida em Node.js/Express",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "clienteId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "clienteEmail",
+      "value": "teste@email.com",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Informações da API",
+      "item": [
+        {
+          "name": "GET - Informações da API",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Retorna informações básicas sobre a API"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Health Check",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Verifica o status de saúde da API"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clientes - CRUD",
+      "item": [
+        {
+          "name": "GET - Listar Todos os Clientes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes"]
+            },
+            "description": "Lista todos os clientes ativos (não deletados)"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Criar Novo Cliente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"{{clienteEmail}}\",\n  \"telefone\": \"+55 11 99999-9999\",\n  \"endereco\": \"Rua das Flores, 123, São Paulo - SP\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes"]
+            },
+            "description": "Cria um novo cliente com dados válidos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('clienteId', response._id);",
+                  "    console.log('Cliente criado com ID:', response._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": []
+        },
+        {
+          "name": "GET - Buscar Cliente por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "{{clienteId}}"]
+            },
+            "description": "Busca um cliente específico pelo ID"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Atualizar Cliente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva Santos\",\n  \"telefone\": \"+55 11 99999-0000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "{{clienteId}}"]
+            },
+            "description": "Atualiza dados de um cliente existente"
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Deletar Cliente (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/{{clienteId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "{{clienteId}}"]
+            },
+            "description": "Remove um cliente (soft delete - não apaga fisicamente)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clientes - Busca",
+      "item": [
+        {
+          "name": "GET - Buscar por Nome",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/busca/nome/silva",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "busca", "nome", "silva"]
+            },
+            "description": "Busca clientes por nome (busca parcial, case-insensitive)"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Buscar por Email",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/busca/email/{{clienteEmail}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "busca", "email", "{{clienteEmail}}"]
+            },
+            "description": "Busca cliente por email exato"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cenários de Teste",
+      "item": [
+        {
+          "name": "POST - Criar Cliente com Dados Inválidos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"email\": \"email-invalido\",\n  \"telefone\": \"telefone-invalido\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes"]
+            },
+            "description": "Testa validação de dados - deve retornar 400 Bad Request"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Criar Cliente com Email Duplicado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Silva\",\n  \"email\": \"{{clienteEmail}}\",\n  \"telefone\": \"+55 11 88888-8888\",\n  \"endereco\": \"Rua B, 456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes"]
+            },
+            "description": "Testa conflito de email - deve retornar 409 Conflict"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Buscar Cliente Inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/507f1f77bcf86cd799439011",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "507f1f77bcf86cd799439011"]
+            },
+            "description": "Busca cliente com ID inexistente - deve retornar 404 Not Found"
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Atualizar Cliente Inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Nome Atualizado\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clientes/507f1f77bcf86cd799439011",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clientes", "507f1f77bcf86cd799439011"]
+            },
+            "description": "Atualiza cliente inexistente - deve retornar 404 Not Found"
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Rota Inexistente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/rota-inexistente",
+              "host": ["{{baseUrl}}"],
+              "path": ["rota-inexistente"]
+            },
+            "description": "Acessa rota inexistente - deve retornar 404 Not Found"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Scripts de pré-requisição podem ser adicionados aqui",
+          "// Por exemplo, gerar timestamps ou tokens dinâmicos"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Scripts de teste podem ser adicionados aqui",
+          "// Por exemplo, validações automáticas de resposta",
+          "",
+          "pm.test('Status code is not 5xx', function () {",
+          "    pm.expect(pm.response.code).to.not.be.oneOf([500, 501, 502, 503, 504, 505]);",
+          "});",
+          "",
+          "pm.test('Response time is less than 1000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+          "});",
+          "",
+          "if (pm.response.code === 200 || pm.response.code === 201) {",
+          "    pm.test('Response has valid JSON', function () {",
+          "        const jsonData = pm.response.json();",
+          "        pm.expect(jsonData).to.be.an('object');",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}
