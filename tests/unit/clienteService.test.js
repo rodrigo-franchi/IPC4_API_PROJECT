@@ -66,6 +66,46 @@ describe('ClienteService', () => {
 
       expect(Cliente.findByEmail).toHaveBeenCalledWith(clienteData.email);
     });
+
+    test('deve restaurar cliente deletado ao cadastrar com mesmo email', async () => {
+      const clienteData = {
+        nome: 'João Silva Renovado',
+        email: 'joao.silva@email.com',
+        telefone: '+55 11 99999-9999',
+        endereco: 'Rua das Flores, 123, São Paulo - SP',
+      };
+
+      const clienteDeletadoMock = {
+        _id: 'deletedId',
+        nome: 'João Silva',
+        email: 'joao.silva@email.com',
+        telefone: '+55 11 99999-9999',
+        endereco: 'Rua das Flores, 123',
+        status: 'inativo',
+        deletedAt: new Date('2026-04-30T10:00:00.000Z'),
+        save: jest.fn().mockResolvedValue({
+          ...clienteData,
+          _id: 'deletedId',
+          status: 'ativo',
+          deletedAt: null,
+          createdAt: new Date('2026-04-30T09:00:00.000Z'),
+          updatedAt: new Date('2026-04-30T11:00:00.000Z'),
+        }),
+      };
+
+      Cliente.findByEmail
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(clienteDeletadoMock);
+
+      const cliente = await ClienteService.criarCliente(clienteData);
+
+      expect(Cliente.findByEmail).toHaveBeenNthCalledWith(1, clienteData.email);
+      expect(Cliente.findByEmail).toHaveBeenNthCalledWith(2, clienteData.email, { includeDeleted: true });
+      expect(clienteDeletadoMock.save).toHaveBeenCalled();
+      expect(cliente.status).toBe('ativo');
+      expect(cliente.deletedAt).toBeNull();
+      expect(cliente.nome).toBe('João Silva Renovado');
+    });
   });
 
   describe('listarClientes', () => {

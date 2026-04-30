@@ -209,6 +209,44 @@ describe('ClienteController', () => {
         message: 'Email já cadastrado',
       });
     });
+
+    test('deve reativar cliente deletado ao cadastrar com mesmo email', async () => {
+      const clienteData = {
+        nome: 'João Silva Renovado',
+        email: 'joao@email.com',
+        telefone: '+55 11 99999-9999',
+        endereco: 'Rua das Flores, 123',
+      };
+
+      const clienteRestaurado = {
+        _id: 'deletedId',
+        ...clienteData,
+        status: 'ativo',
+        deletedAt: null,
+        createdAt: new Date('2026-04-30T09:00:00.000Z'),
+        updatedAt: new Date('2026-04-30T11:00:00.000Z'),
+      };
+
+      ClienteService.criarCliente.mockResolvedValue(clienteRestaurado);
+
+      const response = await request(app)
+        .post('/api/clientes')
+        .send(clienteData);
+
+      expect(response.status).toBe(201);
+      expect(response.body).toMatchObject({
+        _id: 'deletedId',
+        nome: 'João Silva Renovado',
+        email: 'joao@email.com',
+        endereco: 'Rua das Flores, 123',
+        telefone: '+55 11 99999-9999',
+        status: 'ativo',
+        deletedAt: null,
+      });
+      expect(typeof response.body.createdAt).toBe('string');
+      expect(typeof response.body.updatedAt).toBe('string');
+      expect(ClienteService.criarCliente).toHaveBeenCalledWith(clienteData);
+    });
   });
 
   describe('PUT /api/clientes/:id', () => {

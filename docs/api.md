@@ -133,6 +133,8 @@ Busca um cliente pelo ID em uma rota administrativa. Esta rota retorna clientes 
 #### POST /api/clientes
 Cria um novo cliente.
 
+Se o email informado já estiver cadastrado em um cliente deletado logicamente, o registro será reativado e os dados serão atualizados.
+
 **Corpo da requisição:**
 ```json
 {

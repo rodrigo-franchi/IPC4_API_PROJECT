@@ -8,10 +8,27 @@ class ClienteService {
    */
   static async criarCliente(clienteData) {
     try {
-      // Verificar se email já existe
-      const clienteExistente = await Cliente.findByEmail(clienteData.email);
-      if (clienteExistente) {
+      // Verificar se existe cliente ativo com o mesmo email
+      const clienteAtivo = await Cliente.findByEmail(clienteData.email);
+      if (clienteAtivo) {
         throw new Error('Email já cadastrado');
+      }
+
+      // Se existir cliente deletado com o mesmo email, restaura e atualiza os dados
+      const clienteDeletado = await Cliente.findByEmail(clienteData.email, {
+        includeDeleted: true,
+      });
+
+      if (clienteDeletado) {
+        clienteDeletado.nome = clienteData.nome;
+        clienteDeletado.telefone = clienteData.telefone;
+        clienteDeletado.endereco = clienteData.endereco;
+        clienteDeletado.email = clienteData.email.toLowerCase();
+        clienteDeletado.status = 'ativo';
+        clienteDeletado.deletedAt = null;
+        clienteDeletado.updatedAt = new Date();
+
+        return await clienteDeletado.save();
       }
 
       const cliente = new Cliente(clienteData);

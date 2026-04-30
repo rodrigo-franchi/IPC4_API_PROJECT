@@ -81,11 +81,16 @@ clienteSchema.statics.findByNome = function (nome) {
 };
 
 // Método estático para buscar por email exato
-clienteSchema.statics.findByEmail = function (email) {
-  return this.findOne({
+clienteSchema.statics.findByEmail = function (email, options = {}) {
+  const query = {
     email: email.toLowerCase(),
-    deletedAt: null,
-  });
+  };
+
+  if (!options.includeDeleted) {
+    query.deletedAt = null;
+  }
+
+  return this.findOne(query);
 };
 
 module.exports = mongoose.model('Cliente', clienteSchema);
