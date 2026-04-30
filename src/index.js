@@ -44,10 +44,7 @@ app.use((req, res, next) => {
 
 // Conexão com MongoDB
 mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/clientes_db', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/clientes_db')
   .then(() => {
     logger.info('✅ Conectado ao MongoDB', {
       database: 'clientes_db',

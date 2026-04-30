@@ -1,13 +1,13 @@
 {
-  "name": "ipc4-mini-api-clientes",
+  "name": "ipc4-api-project",
   "version": "1.0.0",
   "description": "API CRUD para cadastro de clientes - Projeto acadêmico IPC4",
-  "main": "src/server.js",
+  "main": "src/index.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node src/index.js",
     "dev": "nodemon src/server.js",
     "test": "jest",
     "test:watch": "jest --watch",
