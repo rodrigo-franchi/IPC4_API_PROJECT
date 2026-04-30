@@ -112,7 +112,7 @@ Este documento define o acordo entre o aluno e a IA (GitHub Copilot) para o dese
 3. Documentar estratégia de testes em `docs/piramideTestes.md` - com exemplos em camelCase.
 4. Atualizar documentação a cada nova etapa ou alteração significativa.
 5. Incluir instruções de instalação, execução e uso da API em `README.md`.
-6. Referenciar capturas de tela ou prints relevantes em `.projeto/images/`, como `prj_step1.png`.
+6. Referenciar capturas de tela ou prints relevantes diretamente na documentação ou em `docs/`, sem depender de `.projeto/images/`.
 7. Documentar decisões de arquitetura, ciclos TDD e próximos passos, mantendo consistência com padrão camelCase.
 
 ## 14. README e arquivos de projeto

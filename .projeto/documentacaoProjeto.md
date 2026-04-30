@@ -11,7 +11,6 @@ Este projeto é a base de uma API CRUD para cadastro de clientes, desenvolvido c
 
 ## Estrutura atual do projeto
 - `.projeto/` — pasta oculta de material do projeto
-- `.projeto/images/` — pasta para armazenar capturas de tela e prints
 - `.projeto/documentacaoProjeto.md` — documentação principal do projeto
 - `.projeto/contratoDeDesenvolvimento.md` — contrato formal de desenvolvimento
 - `docs/` — documentação técnica
@@ -41,13 +40,6 @@ Neste passo inicial, foi criado o scaffolding da API com:
 - `PUT /api/customers/:id` — atualiza um cliente existente
 - `DELETE /api/customers/:id` — remove um cliente
 
-## Uso do print `prj_step1`
-Adicione o arquivo do print como:
-
-`.projeto/images/prj_step1.png`
-
-Este print documenta o primeiro passo do projeto e deve ser referenciado no histórico de desenvolvimento.
-
 ## Como executar
 1. Instalar dependências:
 
@@ -75,7 +67,6 @@ http://localhost:3000
 
 #### 09:15 - Etapa 1: Criação da estrutura inicial de pastas
 - ✅ Criada pasta `.projeto/` para material acadêmico
-- ✅ Criada pasta `.projeto/images/` para armazenar screenshots (prj_step1.png)
 - ✅ Criada pasta `docs/` para documentação técnica
 - Status: **Concluído**
 
