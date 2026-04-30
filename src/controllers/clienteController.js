@@ -61,6 +61,44 @@ class ClienteController {
     }
   }
 
+  // GET /api/clientes/admin/:id - Buscar cliente por ID para administração
+  async buscarClientePorIdAdmin(req, res) {
+    try {
+      const { id } = req.params;
+      const cliente = await ClienteService.buscarClientePorIdAdmin(id);
+
+      if (!cliente) {
+        logger.warn('Cliente administrativo não encontrado por ID', {
+          clienteId: id,
+          endpoint: '/api/clientes/admin/:id'
+        });
+        return res.status(404).json({
+          error: 'Cliente não encontrado',
+          message: `Cliente administrativo com ID ${id} não foi encontrado`,
+        });
+      }
+
+      logger.info('Cliente administrativo encontrado por ID', {
+        clienteId: id,
+        clienteNome: cliente.nome,
+        status: cliente.status,
+        endpoint: '/api/clientes/admin/:id'
+      });
+      res.status(200).json(cliente);
+    } catch (error) {
+      logger.error('Erro ao buscar cliente administrativo por ID', {
+        error: error.message,
+        stack: error.stack,
+        clienteId: req.params.id,
+        endpoint: '/api/clientes/admin/:id'
+      });
+      res.status(500).json({
+        error: 'Erro interno do servidor',
+        message: error.message,
+      });
+    }
+  }
+
   // POST /api/clientes - Criar novo cliente
   async criarCliente(req, res) {
     try {

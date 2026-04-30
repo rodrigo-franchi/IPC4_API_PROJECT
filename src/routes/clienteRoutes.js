@@ -6,6 +6,9 @@ const router = express.Router();
 // GET /api/clientes - Listar todos os clientes ativos
 router.get('/', clienteController.listarClientes);
 
+// GET /api/clientes/admin/:id - Buscar cliente por ID para administração
+router.get('/admin/:id', clienteController.buscarClientePorIdAdmin);
+
 // GET /api/clientes/:id - Buscar cliente por ID
 router.get('/:id', clienteController.buscarClientePorId);
 

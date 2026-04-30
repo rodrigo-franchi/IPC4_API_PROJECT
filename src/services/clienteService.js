@@ -45,6 +45,10 @@ class ClienteService {
     });
   }
 
+  static async buscarClientePorIdAdmin(id) {
+    return await Cliente.findOne({ _id: id });
+  }
+
   /**
    * Atualiza dados do cliente
    * @param {string} id - ID do cliente
