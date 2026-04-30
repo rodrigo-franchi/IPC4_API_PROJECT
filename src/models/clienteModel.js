@@ -6,7 +6,9 @@ const clienteSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Nome é obrigatório'],
       trim: true,
+      minlength: [3, 'Nome deve ter no mínimo 3 caracteres'],
       maxlength: [100, 'Nome deve ter no máximo 100 caracteres'],
+      match: [/^[A-Za-zÀ-ú'\- ]+$/, 'Nome deve conter apenas letras, espaços, apóstrofos ou hífens'],
     },
     email: {
       type: String,
@@ -22,12 +24,13 @@ const clienteSchema = new mongoose.Schema(
       required: [true, 'Telefone é obrigatório'],
       trim: true,
       maxlength: [20, 'Telefone deve ter no máximo 20 caracteres'],
+      match: [/^\+?\d{2,3} ?\d{2} ?\d{4,5}-?\d{4}$/, 'Telefone deve seguir o formato internacional +55 11 99999-9999'],
     },
     endereco: {
       type: String,
       required: [true, 'Endereço é obrigatório'],
       trim: true,
-      maxlength: [500, 'Endereço deve ter no máximo 500 caracteres'],
+      maxlength: [200, 'Endereço deve ter no máximo 200 caracteres'],
     },
     status: {
       type: String,
@@ -52,12 +55,14 @@ clienteSchema.index({ nome: 1, email: 1 });
 
 // Método para soft delete
 clienteSchema.methods.softDelete = function () {
+  this.status = 'inativo';
   this.deletedAt = new Date();
   return this.save();
 };
 
 // Método para restaurar cliente deletado
 clienteSchema.methods.restore = function () {
+  this.status = 'ativo';
   this.deletedAt = null;
   return this.save();
 };
