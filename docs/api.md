@@ -441,6 +441,59 @@ curl -X DELETE http://localhost:3000/api/clientes/{id}
 
 ---
 
+## 🏛️ Arquitetura da Aplicação
+
+A arquitetura da API segue o padrão em camadas com responsabilidades separadas entre rotas, controllers, serviços e modelos. A rota administrativa `GET /api/clientes/admin/:id` permite auditoria de registros inativos e soft delete.
+
+```mermaid
+flowchart TD
+  Client[Cliente / Frontend / Postman]
+  subgraph API[API Express]
+    direction TB
+    Routes[Routes\n`src/routes/clienteRoutes.js`]
+    Controllers[Controllers\n`src/controllers/clienteController.js`]
+    Services[Services\n`src/services/clienteService.js`]
+    Models[Models\n`src/models/clienteModel.js`]
+  end
+  Database[(MongoDB)]
+  Logger[Logger\n`src/utils/logger.js`]
+
+  Client -->|HTTP JSON| Routes
+  Routes --> Controllers
+  Controllers --> Services
+  Services --> Models
+  Models -->|CRUD / Query| Database
+  Controllers -->|logs| Logger
+
+  subgraph Extra[Recursos adicionais]
+    direction TB
+    AdminRoute[Admin route\n`GET /api/clientes/admin/:id`]
+    SoftDelete[Soft delete\n`status = inativo`, `deletedAt`]
+  end
+
+  Routes --> AdminRoute
+  Services --> SoftDelete
+  Models --> SoftDelete
+```
+
+### Principais responsabilidades
+
+- `routes`: mapeamento de endpoints e encaminhamento de requisições.
+- `controllers`: tratamento de requisição/resposta e erros HTTP.
+- `services`: lógica de negócio, regras e definição de operações.
+- `models`: persistência de dados e contrato com o banco MongoDB.
+
+### Fluxo de dados
+
+1. A requisição chega ao endpoint definido em `clienteRoutes.js`.
+2. O controller executa validação e chama o serviço correspondente.
+3. O serviço processa regras de negócio e usa o modelo para acessar o banco.
+4. O modelo realiza operação no MongoDB.
+5. O resultado retorna pelo controller ao cliente.
+
+
+---
+
 ## 🔒 **Segurança**
 
 - **Validação de entrada**: Todos os dados são validados antes do processamento

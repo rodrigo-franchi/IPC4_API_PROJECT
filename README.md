@@ -123,6 +123,7 @@ curl http://localhost:3000/api/clientes/busca/nome/silva
 ## 📖 Documentação Completa
 
 - **[Documentação Técnica da API](docs/api.md)** - Documentação completa com exemplos
+- **[Arquitetura do Projeto](docs/arquitetura.md)** - Diagrama de arquitetura com Mermaid
 - **[Collection Postman](docs/postman_collection.json)** - Importe no Postman para testar
 - **[Documentação do Projeto](.projeto/documentacaoProjeto.md)** - Log detalhado do desenvolvimento
 - **[Contrato de Desenvolvimento](.projeto/contratoDeDesenvolvimento.md)** - Padrões e metodologias
