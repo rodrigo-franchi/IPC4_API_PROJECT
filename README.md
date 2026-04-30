@@ -35,18 +35,28 @@ Uma API REST completa para gerenciamento de clientes, desenvolvida em Node.js co
 ```bash
 # Clonar o repositório
 git clone <url-do-repositorio>
-cd ipc4-mini-api-clientes
+cd ipc4-api-project
 
 # Instalar dependências
 npm install
 ```
 
 ### Configuração
-```bash
-# Variáveis de ambiente (opcional)
-cp .env.example .env
+A API suporta arquivo de ambiente `.env`. Copie o arquivo de exemplo e ajuste os valores antes de executar.
 
-# Editar .env com suas configurações
+```bash
+cp .env.example .env
+```
+
+No Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Edite `.env` com suas configurações:
+
+```env
 MONGODB_URI=mongodb://localhost:27017/clientes_db
 PORT=3000
 NODE_ENV=development

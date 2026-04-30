@@ -101,6 +101,35 @@ Busca um cliente específico pelo ID.
 }
 ```
 
+#### GET /api/clientes/admin/{id}
+Busca um cliente pelo ID em uma rota administrativa. Esta rota retorna clientes ativos e inativos (soft deleted), permitindo auditoria e consultas administrativas.
+
+**Parâmetros:**
+- `id` (path): ID do cliente
+
+**Resposta (200):**
+```json
+{
+  "_id": "507f1f77bcf86cd799439011",
+  "nome": "João Silva",
+  "email": "joao.silva@email.com",
+  "telefone": "+55 11 99999-9999",
+  "endereco": "Rua das Flores, 123, São Paulo - SP",
+  "status": "inativo",
+  "createdAt": "2024-01-01T10:00:00.000Z",
+  "updatedAt": "2024-01-01T10:00:00.000Z",
+  "deletedAt": "2024-01-01T12:00:00.000Z"
+}
+```
+
+**Resposta (404):**
+```json
+{
+  "error": "Cliente não encontrado",
+  "message": "Cliente administrativo com ID 507f1f77bcf86cd799439011 não foi encontrado"
+}
+```
+
 #### POST /api/clientes
 Cria um novo cliente.
 
@@ -187,7 +216,7 @@ Atualiza um cliente existente.
 ```
 
 #### DELETE /api/clientes/{id}
-Remove um cliente (soft delete).
+Remove um cliente (soft delete) e atualiza o status para `inativo`.
 
 **Parâmetros:**
 - `id` (path): ID do cliente
@@ -196,6 +225,7 @@ Remove um cliente (soft delete).
 ```json
 {
   "_id": "507f1f77bcf86cd799439011",
+  "status": "inativo",
   "deletedAt": "2024-01-01T12:00:00.000Z"
 }
 ```
@@ -326,10 +356,23 @@ npm install
 ```
 
 ### Configuração
+A API suporta arquivo de ambiente `.env`. Copie o exemplo e personalize os valores antes de executar.
+
 ```bash
-# Variáveis de ambiente (opcional)
-export MONGODB_URI=mongodb://localhost:27017/clientes_db
-export PORT=3000
+cp .env.example .env
+```
+
+No Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+### Variáveis de ambiente
+```env
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/clientes_db
+NODE_ENV=development
 ```
 
 ### Execução
