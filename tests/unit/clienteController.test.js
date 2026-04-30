@@ -13,6 +13,7 @@ app.use(express.json());
 
 // Rotas para teste
 app.get('/api/clientes', clienteController.listarClientes);
+app.get('/api/clientes/admin/:id', clienteController.buscarClientePorIdAdmin);
 app.get('/api/clientes/:id', clienteController.buscarClientePorId);
 app.post('/api/clientes', clienteController.criarCliente);
 app.put('/api/clientes/:id', clienteController.atualizarCliente);
@@ -88,6 +89,44 @@ describe('ClienteController', () => {
       expect(response.body).toEqual({
         error: 'Erro interno do servidor',
         message: 'Erro interno',
+      });
+    });
+  });
+
+  describe('GET /api/clientes/admin/:id', () => {
+    test('deve retornar cliente administrativo com status inativo', async () => {
+      const clienteMock = {
+        _id: '123',
+        nome: 'João Silva',
+        email: 'joao@email.com',
+        status: 'inativo',
+        deletedAt: new Date(),
+      };
+
+      ClienteService.buscarClientePorIdAdmin.mockResolvedValue(clienteMock);
+
+      const response = await request(app).get('/api/clientes/admin/123');
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        _id: '123',
+        nome: 'João Silva',
+        email: 'joao@email.com',
+        status: 'inativo',
+      });
+      expect(typeof response.body.deletedAt).toBe('string');
+      expect(ClienteService.buscarClientePorIdAdmin).toHaveBeenCalledWith('123');
+    });
+
+    test('deve retornar 404 quando cliente administrativo não for encontrado', async () => {
+      ClienteService.buscarClientePorIdAdmin.mockResolvedValue(null);
+
+      const response = await request(app).get('/api/clientes/admin/999');
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        error: 'Cliente não encontrado',
+        message: 'Cliente administrativo com ID 999 não foi encontrado',
       });
     });
   });

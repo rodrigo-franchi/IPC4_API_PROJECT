@@ -108,6 +108,24 @@ describe('ClienteService', () => {
     });
   });
 
+  describe('buscarClientePorIdAdmin', () => {
+    test('deve buscar cliente por ID administrativo incluindo inativo', async () => {
+      const clienteMock = {
+        _id: '123',
+        nome: 'João Silva',
+        status: 'inativo',
+        deletedAt: new Date(),
+      };
+
+      Cliente.findOne.mockResolvedValue(clienteMock);
+
+      const cliente = await ClienteService.buscarClientePorIdAdmin('123');
+
+      expect(Cliente.findOne).toHaveBeenCalledWith({ _id: '123' });
+      expect(cliente).toEqual(clienteMock);
+    });
+  });
+
   describe('atualizarCliente', () => {
     test('deve atualizar dados do cliente', async () => {
       const clienteExistente = {

@@ -44,6 +44,21 @@ describe('Cliente Routes', () => {
     });
   });
 
+  describe('GET /api/clientes/admin/:id', () => {
+    test('deve chamar clienteController.buscarClientePorIdAdmin com ID correto', async () => {
+      clienteController.buscarClientePorIdAdmin.mockImplementation((req, res) => {
+        res.status(200).json({ _id: req.params.id, nome: 'João Silva', status: 'inativo' });
+      });
+
+      const response = await request(app).get('/api/clientes/admin/123');
+
+      expect(response.status).toBe(200);
+      expect(clienteController.buscarClientePorIdAdmin).toHaveBeenCalledTimes(1);
+      expect(response.body._id).toBe('123');
+      expect(response.body.status).toBe('inativo');
+    });
+  });
+
   describe('POST /api/clientes', () => {
     test('deve chamar clienteController.criarCliente com dados do body', async () => {
       const clienteData = { nome: 'João Silva', email: 'joao@email.com' };

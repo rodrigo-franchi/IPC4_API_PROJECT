@@ -155,8 +155,8 @@ describe('Cliente Model - Validações de Schema', () => {
       expect(validationError.errors.telefone.message).toContain('Telefone deve ter no máximo 20 caracteres');
     });
 
-    test('deve rejeitar endereco com mais de 500 caracteres', () => {
-      const enderecoLongo = 'Rua '.repeat(126); // 504 chars
+    test('deve rejeitar endereco com mais de 200 caracteres', () => {
+      const enderecoLongo = 'Rua '.repeat(51); // 204 chars
       const cliente = new Cliente({
         nome: 'João Silva',
         email: 'joao@email.com',
@@ -167,7 +167,7 @@ describe('Cliente Model - Validações de Schema', () => {
       const validationError = cliente.validateSync();
 
       expect(validationError.errors.endereco).toBeDefined();
-      expect(validationError.errors.endereco.message).toContain('Endereço deve ter no máximo 500 caracteres');
+      expect(validationError.errors.endereco.message).toContain('Endereço deve ter no máximo 200 caracteres');
     });
   });
 
