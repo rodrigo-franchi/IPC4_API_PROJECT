@@ -7,6 +7,18 @@ Esta é uma API REST completa para gerenciamento de clientes, desenvolvida em No
 **Versão:** 1.0.0
 **Base URL:** `http://localhost:3000`
 **Formato de dados:** JSON
+**Status:** Production Ready
+**Testes:** 74 testes automatizados (100% passing)
+
+## Funcionalidades Principais
+
+- ✅ CRUD completo com validações robustas
+- ✅ Soft delete com auditoria (status + deletedAt)
+- ✅ Rota administrativa para consulta de clientes deletados
+- ✅ Reativação automática via email duplicado
+- ✅ Busca avançada (nome e email)
+- ✅ Logging estruturado em JSON
+- ✅ Testes em pirâmide (unitários, integração, E2E)
 
 ## Autenticação
 
@@ -131,9 +143,14 @@ Busca um cliente pelo ID em uma rota administrativa. Esta rota retorna clientes 
 ```
 
 #### POST /api/clientes
-Cria um novo cliente.
+Cria um novo cliente ou reativa cliente deletado.
 
-Se o email informado já estiver cadastrado em um cliente deletado logicamente, o registro será reativado e os dados serão atualizados.
+**Comportamento especial - Reativação:**
+Se o email informado já estiver cadastrado em um cliente deletado logicamente (status='inativo', deletedAt!=null), o registro será reativado com os novos dados:
+1. O status volta para 'ativo'
+2. O campo deletedAt é removido (volta a null)
+3. Todos os dados são atualizados com os novos valores
+4. Retorna 201 (Created) com o cliente restaurado
 
 **Corpo da requisição:**
 ```json
@@ -218,7 +235,15 @@ Atualiza um cliente existente.
 ```
 
 #### DELETE /api/clientes/{id}
-Remove um cliente (soft delete) e atualiza o status para `inativo`.
+Marca um cliente como deletado (soft delete) sem remover dados.
+
+**Comportamento:**
+- Status é alterado para 'inativo'
+- Campo deletedAt é preenchido com timestamp atual
+- Dados não são removidos do banco
+- Cliente não aparece em listagens normais (GET /api/clientes)
+- Pode ser consultado via rota admin (GET /api/clientes/admin/:id)
+- Pode ser reativado ao registrar com o mesmo email
 
 **Parâmetros:**
 - `id` (path): ID do cliente
@@ -227,7 +252,13 @@ Remove um cliente (soft delete) e atualiza o status para `inativo`.
 ```json
 {
   "_id": "507f1f77bcf86cd799439011",
+  "nome": "João Silva",
+  "email": "joao.silva@email.com",
+  "telefone": "+55 11 99999-9999",
+  "endereco": "Rua das Flores, 123, São Paulo - SP",
   "status": "inativo",
+  "createdAt": "2024-01-01T10:00:00.000Z",
+  "updatedAt": "2024-01-01T12:00:00.000Z",
   "deletedAt": "2024-01-01T12:00:00.000Z"
 }
 ```

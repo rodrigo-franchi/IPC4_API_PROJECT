@@ -255,3 +255,132 @@ Funcionalidade: Deletar cliente
 8. **Timestamps**: Sim (createdAt, updatedAt)
 9. **Status do cliente**: Sim, ativo, inativo e bloqueado
 10. **Banco de dados**: MongoDB
+
+---
+
+## Funcionalidade 6: Soft Delete com Auditoria
+
+### Cenário 6.1: Deletar cliente - Soft Delete
+```gherkin
+Funcionalidade: Deletar cliente com soft delete
+
+  Cenário: Deletar cliente marca como inativo sem remover dados
+    Dado que um cliente com ID "123" existe e está ativo
+    Quando eu envio uma requisição DELETE para "/api/clientes/123"
+    Então o status HTTP deve ser 200
+    E o cliente deve ter status alterado para "inativo"
+    E o campo deletedAt deve conter a data/hora da deleção
+    E os dados originais (nome, email, etc) devem ser preservados
+    E a requisição GET para "/api/clientes/123" deve retornar 404 (hidden do usuário)
+    E a requisição GET para "/api/clientes/admin/123" deve retornar 200 com status "inativo"
+```
+
+### Cenário 6.2: Listar clientes - Exclui deletados automaticamente
+```gherkin
+  Cenário: Listar clientes não inclui deletados
+    Dado que existem 3 clientes ativos e 2 deletados
+    Quando eu envio uma requisição GET para "/api/clientes"
+    Então o status HTTP deve ser 200
+    E a resposta deve conter apenas 3 clientes (os ativos)
+    E os clientes deletados não devem aparecer na lista
+```
+
+---
+
+## Funcionalidade 7: Rota Administrativa para Auditoria
+
+### Cenário 7.1: Buscar cliente deletado via rota admin
+```gherkin
+Funcionalidade: Rota administrativa para auditoria
+
+  Cenário: Buscar cliente deletado através da rota admin
+    Dado que um cliente foi marcado como deletado (inativo)
+    E seu ID é "123"
+    Quando eu envio uma requisição GET para "/api/clientes/admin/123"
+    Então o status HTTP deve ser 200
+    E a resposta deve conter o cliente com status "inativo"
+    E o campo deletedAt deve conter a data da deleção
+    E todos os dados originais devem estar preservados
+```
+
+### Cenário 7.2: Rota admin não encontra cliente inexistente
+```gherkin
+  Cenário: Tentar buscar cliente inexistente na rota admin
+    Dado que nenhum cliente com ID "999" existe
+    Quando eu envio uma requisição GET para "/api/clientes/admin/999"
+    Então o status HTTP deve ser 404
+    E a resposta deve conter mensagem de erro
+```
+
+---
+
+## Funcionalidade 8: Reativação de Cliente via Email Duplicado
+
+### Cenário 8.1: Reativar cliente deletado ao registrar com mesmo email
+```gherkin
+Funcionalidade: Reativação automática de cliente deletado
+
+  Cenário: Registrar com email de cliente deletado reativa a conta
+    Dado que um cliente com email "joao@email.com" foi deletado logicamente
+    E seu ID é "123"
+    E o cliente tem status "inativo" e deletedAt preenchido
+    Quando eu envio uma requisição POST para "/api/clientes"
+    Com os dados:
+      | nome      | "João Silva Renovado" |
+      | email     | "joao@email.com"      |
+      | telefone  | "+55 11 98765-4321"   |
+      | endereco  | "Nova Rua, 999"       |
+    Então o status HTTP deve ser 201 (Created)
+    E a resposta deve retornar o mesmo cliente (mesmo ID "123")
+    E o status deve ser alterado para "ativo"
+    E o campo deletedAt deve ser null
+    E todos os dados devem estar atualizados com os novos valores
+```
+
+### Cenário 8.2: Email ativo impede reativação (conflito)
+```gherkin
+  Cenário: Não é possível reativar quando email ativo já existe
+    Dado que dois clientes existem:
+      | Cliente A | email "joao@email.com" | status "inativo" (deletado)  |
+      | Cliente B | email "joao@email.com" | status "ativo" (duplicado!) |
+    Quando eu envio uma requisição POST para "/api/clientes"
+    Com email "joao@email.com" para reativar Cliente A
+    Então o status HTTP deve ser 409 (Conflict)
+    E a resposta deve conter erro "Email já cadastrado"
+    E nenhum cliente deve ser modificado
+```
+
+### Cenário 8.3: Email único permite reativação
+```gherkin
+  Cenário: Email deletado pode ser reativado se não houver duplicado ativo
+    Dado que um cliente com email "maria@email.com" foi deletado
+    E nenhum cliente ativo possui esse email
+    Quando eu envio uma requisição POST para "/api/clientes"
+    Com email "maria@email.com"
+    Então o status HTTP deve ser 201
+    E o cliente deve ser reativado com todos os dados atualizados
+```
+
+---
+
+## Status de Implementação (30/04/2026)
+
+### ✅ Funcionalidades Implementadas e Testadas
+- [x] CRUD Completo (Create, Read, Update, Delete)
+- [x] Validações de Email (RFC 5322) e Telefone (Internacional)
+- [x] Soft Delete com auditoria (status + deletedAt)
+- [x] Rota Administrativa (/api/clientes/admin/:id)
+- [x] Reativação automática via email duplicado
+- [x] Listagem excluindo clientes deletados
+- [x] Busca por nome (parcial) e email (exato)
+- [x] Logging estruturado em JSON
+- [x] 74 testes automatizados (100% passing)
+
+### 📊 Cobertura de Testes
+- **Testes Unitários**: 62 testes
+  - Model: 24 testes (validações, soft delete, restore)
+  - Service: 13 testes (CRUD + reativação)
+  - Controller: 18 testes (HTTP handling + reativação)
+  - Routes: 7 testes (registro de rotas)
+- **Testes de Integração**: 12 testes (end-to-end)
+- **Total**: 74 testes com 100% passing rate

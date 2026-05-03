@@ -9,7 +9,10 @@ Uma API REST completa para gerenciamento de clientes, desenvolvida em Node.js co
 - ✅ **Soft Delete**: Exclusão lógica mantendo histórico
 - ✅ **Busca Avançada**: Por nome parcial e email exato
 - ✅ **Logging Estruturado**: Sistema completo de logs com Winston
-- ✅ **Testes Completos**: 68 testes automatizados (pirâmide de testes)
+- ✅ **Testes Completos**: 74 testes automatizados (pirâmide de testes - 100% passing)
+- ✅ **Soft Delete com Auditoria**: Marca clientes como inativos mantendo histórico
+- ✅ **Reativação de Clientes**: Registro deletado pode ser restaurado via email duplicado
+- ✅ **Rota Administrativa**: Endpoint secreto para consultar clientes deletados
 - ✅ **Documentação Completa**: API docs e collection Postman
 - ✅ **Padrões SOLID/DRY**: Código limpo e bem estruturado
 
@@ -99,6 +102,7 @@ npm run format
 | DELETE | `/api/clientes/:id` | Deletar cliente (soft delete) |
 | GET | `/api/clientes/busca/nome/:nome` | Buscar por nome |
 | GET | `/api/clientes/busca/email/:email` | Buscar por email |
+| GET | `/api/clientes/admin/:id` | Buscar cliente (admin) - inclui deletados |
 
 ### Exemplo de Uso
 
@@ -128,6 +132,7 @@ curl http://localhost:3000/api/clientes/busca/nome/silva
 - **[Documentação do Projeto](.projeto/documentacaoProjeto.md)** - Log detalhado do desenvolvimento
 - **[Contrato de Desenvolvimento](.projeto/contratoDeDesenvolvimento.md)** - Padrões e metodologias
 - **[Pirâmide de Testes](docs/piramideTestes.md)** - Estratégia de testes
+- **[Requisitos BDD](docs/requisitosBdd.md)** - Cenários em Gherkin
 
 ## 🧪 Testes
 
@@ -146,14 +151,15 @@ npm test -- tests/integration/clienteApi.test.js
 ### Estrutura de Testes
 ```
 tests/
-├── unit/                    # 58 testes unitários
-│   ├── clienteModel.test.js     # Validações do modelo
-│   ├── clienteService.test.js   # Lógica de negócio
-│   ├── clienteController.test.js # Endpoints REST
-│   ├── clienteRoutes.test.js    # Configuração de rotas
-│   └── ...
-└── integration/             # 10 testes de integração
-    └── clienteApi.test.js       # Testes end-to-end
+├── unit/                    # 62 testes unitários
+│   ├── clienteModel.test.js     # Validações do modelo (24 testes)
+│   ├── clienteService.test.js   # Lógica de negócio (13 testes)
+│   ├── clienteController.test.js # Endpoints REST (18 testes)
+│   └── clienteRoutes.test.js    # Configuração de rotas (7 testes)
+└── integration/             # 12 testes de integração
+    └── clienteApi.test.js       # Testes end-to-end com reativação
+
+Total: 74 testes - 100% passing
 ```
 
 ## 📊 Logging
